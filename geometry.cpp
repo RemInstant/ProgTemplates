@@ -43,12 +43,12 @@ struct vec2d {
 		return out;
 	}
     
-    //scalar (dot) product
+    // scalar (dot) product
     friend double dot(const vec2d &a, const vec2d &b) {
         return a.x*b.x + a.y*b.y;
     }
     
-    //vector (cross) product
+    // vector (cross) product
     friend double cross(const vec2d &a, const vec2d &b) {
         return a.x*b.y - b.x*a.y;
     }
@@ -57,12 +57,12 @@ struct vec2d {
         return sqrt(dot(*this, *this));
     }
     
-    // find distance between two points
+    // finds distance between two points
     friend double pointDist(const vec2d &a, const vec2d &b) {
         return sqrt((b.x-a.x)*(b.x-a.x) + (b.y-a.y)*(b.y-a.y));
     }
     
-    // find an angle between two vectors
+    // finds an angle between two vectors
     friend double angle(const vec2d &a, const vec2d &b) {
         double phi = atan2(cross(a,b), dot(a,b));
         return abs(phi);
@@ -70,7 +70,7 @@ struct vec2d {
 };
 
 
-// find the point on the line segment nearest to the given one (using ternary search)
+// finds the point on the line segment nearest to the given one (using ternary search)
 // p --- the given point
 // t1 -- the first segment end
 // t1 -- the second segment end
@@ -96,4 +96,5 @@ vec2d NearestPointOfLineSeg(const vec2d &p, const vec2d &t1, const vec2d &t2, in
 }
 
 int main() {
+    cout << "Hello geometry!";
 }

@@ -117,5 +117,9 @@ vector<ll> djk(const wgraph &g, int st) {
 // Dijkstra's algorithm for dense wgraphs ( O(n^2 + m) )
 // todo
 
+// Prim's algorithm
+// todo
+
 int main() {
+    cout << "Hello graphs!";
 }
