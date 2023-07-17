@@ -169,7 +169,7 @@ struct lca {
 };
  
 int main() {
-	cout << "Hello lca!";
+	cout << "Hello lca!\n";
 	
 	int n = 7;
 	wgraph g(n);
@@ -187,7 +187,6 @@ int main() {
 	g[5].push_back({6, 5});
 	
 	lca c(g, 0);
-	cout << '\n';
 	cout << c.getLen(2, 6) << '\n';
 	cout << c.getMaxData(2, 6) << '\n';
 	cout << c.getMaxData(2, 5) << '\n';

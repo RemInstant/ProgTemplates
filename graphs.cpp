@@ -7,21 +7,22 @@
 using namespace std;
 using ll = long long;
 using pll = pair<ll, ll>;
-using graph = vector< vector<int> >;
-using wgraph = vector< vector<wedge> >;
 
 struct wedge {
 	int v;
 	ll w;
 };
 
+using graph = vector< vector<int> >;
+using wgraph = vector< vector<wedge> >;
+
 // breadth-first search
 // finds the min path from given vertex to each other in graph
 // g - the graph
 // st - the given vertex
 // returns vector of distances
-vector<ll> bfs(const graph& g, int st) {
-	vector<ll> d(g.size(), -1);
+vector<int> bfs(const graph& g, int st) {
+	vector<int> d(g.size(), -1);
 	d[st] = 0;
 	queue<int> q;
 	q.push(st);
@@ -38,26 +39,28 @@ vector<ll> bfs(const graph& g, int st) {
 	return d;
 }
 
+// recursion for dfs
+void dfsRec(const graph& g, int u, vector<int>& d, vector<char>& visited ) {
+	visited[u] = 1;
+	for(int v : g[u]) {
+		if(visited[v]) continue;
+		d[v] = min(d[v], d[u]+1);
+		dfsRec(g, v, d, visited);
+	}
+}
+
+
 // depth-first search
 // finds the min path from given vertex to each other in graph
 // g - the graph
 // st - the given vertex
 // returns vector of distances
-vector<ll> dfs(const graph &g, int st) {
-	vector<ll> d(g.size(), 1e18);
-	vector<int> visited(g.size(), 0);
+vector<int> dfs(const graph& g, int st) {
+	vector<int> d(g.size(), 1e9);
+	vector<char> visited(g.size(), 0);
 	d[st] = 0;
-	dfs(g, st, d, visited);
+	dfsRec(g, st, d, visited);
 	return d;
-}
-
-void dfs(const graph &g, int u, vector<ll> &d, vector<int> &visited) {
-	visited[u] = 1;
-	for(int v : g[u]) {
-		if(visited[v]) continue;
-		d[v] = min(d[v], d[u]+1);
-		dfs(g, v, d, visited);
-	}
 }
 
 // Floyde-Warshall algorithm
@@ -65,7 +68,7 @@ void dfs(const graph &g, int u, vector<ll> &d, vector<int> &visited) {
 // g - the wgraph
 // st - the given vertex
 // returns matrix of distances
-vector< vector<ll> > fw(const wgraph &g) {
+vector< vector<ll> > fw(const wgraph& g) {
 	int n = g.size();
 	vector< vector<ll> > d(n, vector<ll>(n, 1e18));
 	for(int i = 0; i < n; ++i) {
@@ -85,6 +88,7 @@ vector< vector<ll> > fw(const wgraph &g) {
 			}
 		}
 	}
+	return d;
 }
 
 // Dijkstra's algorithm for sparce wgraphs ( O(nlogn + mlogn) )
@@ -92,7 +96,7 @@ vector< vector<ll> > fw(const wgraph &g) {
 // g - the wgraph
 // st - the given vertex
 // returns vector of distances
-vector<ll> djk(const wgraph &g, int st) {
+vector<ll> djk(const wgraph& g, int st) {
 	vector<ll> d(g.size(), 1e18);
 	set<pll> s;
 	d[st] = 0;
@@ -111,6 +115,7 @@ vector<ll> djk(const wgraph &g, int st) {
 			}
 		}
 	}
+	return d;
 }
 
 // Dijkstra's algorithm for dense wgraphs ( O(n^2 + m) )
@@ -145,6 +150,62 @@ ll prim(const wgraph& g) {
 	return total;
 }
 
+// recursion for kuhn
+bool dfsKuhn(const graph& g, int u, vector<int>& mt, vector<char>& visited) {
+    if(visited[u]) return false;
+    visited[u] = 1;
+    for(int v : g[u]) {
+        if(mt[v] == -1) {
+            mt[v] = u;
+            return true;
+        }
+        if(dfsKuhn(g, mt[v], mt, visited)) {
+            mt[v] = u;
+            return true;
+        }
+    }
+    return false;
+}
+
+// Kuhn's algorithm
+// finds max matching in the given bipartite graph
+// g - the given bipartite graph
+// st - starting vertex (optional)
+int kuhn(const graph& g, int st = 0) {
+	int n = g.size();
+	int ans = 0;
+	vector<int> d = bfs(g, st);
+    vector<int> mt(n, -1);
+    for(int i = 0; i < n; ++i) {
+        if(d[i] & 1) continue;
+        vector<char> visited(n, 0);
+        ans += dfsKuhn(g, i, mt, visited);
+    }
+	return ans;
+}
+
+
+
 int main() {
-	cout << "Hello graphs!";
+	cout << "Hello graphs!\n";
+	
+	int n = 6;
+	graph g(n);
+	g[0].push_back(2);
+	g[0].push_back(3);
+	g[0].push_back(4);
+	g[1].push_back(3);
+	g[1].push_back(4);
+	g[1].push_back(5);
+	g[2].push_back(0);
+	g[3].push_back(0);
+	g[3].push_back(1);
+	g[4].push_back(0);
+	g[4].push_back(1);
+	g[5].push_back(1);
+	
+	cout << kuhn(g) << '\n';
+	cout << kuhn(g, 1) << '\n';
+	cout << kuhn(g, 2) << '\n';
+	cout << kuhn(g, 5) << '\n';
 }

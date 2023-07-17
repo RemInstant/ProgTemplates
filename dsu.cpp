@@ -44,5 +44,5 @@ struct dsu {
 };
 
 int main() {
-	cout << "Hello dsu!";
+	cout << "Hello dsu!\n";
 }
