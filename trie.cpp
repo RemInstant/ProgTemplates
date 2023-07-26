@@ -101,8 +101,6 @@ struct trie {
 };
  
 int main() {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
 	
 	trie t;
 	t.insert("aaa");
