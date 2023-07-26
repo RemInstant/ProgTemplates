@@ -9,5 +9,5 @@ flowNetwork +? <br>
 strings +- <br>
 trie +? <br>
 gameTheory - <br>
-segtree - <br>
+segtree +? <br>
 treap -
