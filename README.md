@@ -8,6 +8,6 @@ lca +? <br>
 flowNetwork +? <br>
 strings +- <br>
 trie +? <br>
-gameTheory - <br>
+gameTheory +? <br>
 segtree +? <br>
 treap +?
