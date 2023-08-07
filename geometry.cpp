@@ -81,11 +81,11 @@ vec2d NearestPointOfLineSeg(const vec2d& p, const vec2d& t1, const vec2d& t2, in
 	double ll = 0, rr = 1, ls, rs;
 	for(int i = 0; i < acc; ++i) {
 		double l = (2*ll + rr) / 3;
-		double r = (ll + 2*rr) / 3;   
+		double r = (ll + 2*rr) / 3;
 		lp = t1 + l*seg;
-		rp = t1 + r*seg;      
+		rp = t1 + r*seg;
 		ls = pointDist(p, lp);
-		rs = pointDist(p, rp);       
+		rs = pointDist(p, rp);
 		if(ls < rs) {
 			rr = r;
 		} else {
