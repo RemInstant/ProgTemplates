@@ -4,7 +4,7 @@
 using namespace std;
 using ll = long long;
 
-// finds greatest common divisor of two numbers
+// returns greatest common divisor of two numbers
 ll gcd(ll a, ll b) {
 	while(a != 0) {
 		b %= a;
@@ -29,7 +29,7 @@ vector<char> sieve(ll n) {
 }
 
 // binary power O(logn)
-// finds nth power of an integer x modulo mod
+// returns x raised to the nth power modulo mod
 ll bpow(ll x, ll n, ll mod = 1e18) {
     ll res = 1;
     while(n > 0) {
