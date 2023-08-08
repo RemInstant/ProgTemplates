@@ -8,7 +8,7 @@ using namespace std;
 // search O(n)
 // insert O(n)
 // delete O(n)
-struct trie {
+class trie {
 	using dict = map<char, int>;
 	
 	// letter-node
@@ -21,32 +21,30 @@ struct trie {
 		node(bool _n, int _d): n(_n), depth(_d), subN(0) {};
 	};
 	
-	vector<node> data;
-	
-	int create_node(bool e, int d) {
-		data.push_back(node(e, d));
-		return data.size()-1;
-	}
-	
+  private:
+	vector<node> data_;
+
+  public:
 	trie() { create_node(0, 0); }
 	
-	bool can_go(int u, char c) { return data[u].go.count(c); }
-	
-	int go(int u, char c) { return data[u].go[c]; }
+	int create_node(bool e, int d) {
+		data_.push_back(node(e, d));
+		return data_.size()-1;
+	}
 	
 	// insert word s in the tree
 	void insert(const string& s) {
 		if(s.size() == 0) return;
 		int u = 0;
 		for(size_t i = 0; i < s.size(); ++i) {
-			++data[u].subN;
+			++data_[u].subN;
 			if(!can_go(u, s[i])) {
-				data[u].go[s[i]] = create_node(0, data[u].depth+1);
+				data_[u].go[s[i]] = create_node(0, data_[u].depth+1);
 			}
 			u = go(u, s[i]);
 		}
-		++data[u].subN;
-		++data[u].n;
+		++data_[u].subN;
+		++data_[u].n;
 	}
 	
 	// counts the word s in the tree
@@ -56,7 +54,7 @@ struct trie {
 			if(!can_go(u,c)) return 0;
 			u = go(u,c);
 		}
-		return data[u].n;
+		return data_[u].n;
 	}
 	
 	// counts words with prefix s in the tree
@@ -66,18 +64,18 @@ struct trie {
 			if(!can_go(u,c)) return 0;
 			u = go(u,c);
 		}
-		return data[u].subN;
+		return data_[u].subN;
 	}
 	
 	// deletes one word s from the tree
 	void erase(const string& s) {
 		int u = 0;
 		for (char c : s) {
-			--data[u].subN;
+			--data_[u].subN;
 			u = go(u,c);
 		}
-		--data[u].subN;
-		--data[u].n;
+		--data_[u].subN;
+		--data_[u].n;
 	}
 	
 	// finds the kth word alphabetically in the tree (1-indexing)
@@ -85,19 +83,24 @@ struct trie {
 		int u = 0;
 		string s = "";
 		while(1) {
-			k -= data[u].n;
+			k -= data_[u].n;
 			if(k <= 0) return s;
-			for(pair<char, int> q : data[u].go) {
+			for(pair<char, int> q : data_[u].go) {
 				int v = q.second;
-				if(k <= data[v].subN) {
+				if(k <= data_[v].subN) {
 					s += q.first;
 					u = v;
 					break;
 				}
-				k -= data[v].subN;
+				k -= data_[v].subN;
 			}
 		}
 	}
+	
+  private:
+	bool can_go(int u, char c) { return data_[u].go.count(c); }
+	
+	int go(int u, char c) { return data_[u].go[c]; }
 };
  
 int main() {
@@ -111,13 +114,6 @@ int main() {
 	t.insert("ab");
 	t.insert("b");
 	t.insert("a");
-	
-	for(size_t i = 0; i < t.data.size(); ++i) {
-		cout << i << ' ' << 
-				t.data[i].depth << ' ' <<
-				t.data[i].n << ' ' <<
-				t.data[i].subN << '\n';
-	}
 	
 	cout << '\n';
 	for(int i = 1; i <= 8; ++i) {

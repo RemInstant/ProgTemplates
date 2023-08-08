@@ -8,7 +8,7 @@ using graph = vector< vector<int> >;
 
 
 // flow network
-struct network {
+class network {
 	struct edge {
 		int u, v;
 		ll f, c;
@@ -16,26 +16,28 @@ struct network {
 		edge(int _u, int _v, int _c): u(_u), v(_v), f(0), c(_c) {}
 	};
 	
-	int n;				// vertex count
-	vector<edge> edges;	// vector of edges
-	graph g;			// "pointers" on edges
-	vector<int> d;		// distances from start
-	vector<size_t> ptr;	// speeds up finding augmenting paths in dfs
+  private:
+	int n_;					// vertex count
+	vector<edge> edges_;	// vector of edges
+	graph g_;				// "pointers" on edges
+	vector<int> d_;			// distances from start
+	vector<size_t> ptr_;	// speeds up finding augmenting paths in dfs
 	
-	network(int _n): n(_n), g(n) {}
+  public:
+	network(int n): n_(n), g_(n) {}
 	
 	//adds edge and inverse one to the network
 	void add_edge(int u, int v, int cap) {
-		g[u].push_back(edges.size());
-		edges.push_back(edge(u, v, cap));
-		g[v].push_back(edges.size());
-		edges.push_back(edge(v, u, 0));
+		g_[u].push_back(edges_.size());
+		edges_.push_back(edge(u, v, cap));
+		g_[v].push_back(edges_.size());
+		edges_.push_back(edge(v, u, 0));
 	}
 	
 	friend ostream& operator<<(ostream& out, const network& net) {
-		int m = net.edges.size();
+		int m = net.edges_.size();
 		for (int i = 0; i < m; i+=2) {
-			edge dg = net.edges[i];
+			edge dg = net.edges_[i];
 			if(dg.f > 0) {
 				out << dg.u+1 << ' ' << dg.v+1 << ' ' << dg.f << '\n';
 			}
@@ -43,21 +45,33 @@ struct network {
 		return out;
 	}
 	
+	// finds max flow in the network using Dinic's algorithm
+	int getMaxFlow(int start, int finish) {
+		d_.assign(n_, -1);
+		ptr_.assign(n_, 0);
+		int res = 0;
+		for(int pw = 30; pw >= 0; --pw) {
+			res += dinic(start, finish, 1 << pw);
+		}
+		return res;
+	}
+	
+  private:
 	void bfs(int u, int b) {
-		d.assign(n, -1);
+		d_.assign(n_, -1);
 		queue<int> q;
-		d[u] = 0;
+		d_[u] = 0;
 		q.push(u);
 		while (!q.empty()) {
 			u = q.front();
 			q.pop();
-			for(int ind : g[u]) {
-				int v = edges[ind].v;
-				int c = edges[ind].c;
-				int f = edges[ind].f;
+			for(int ind : g_[u]) {
+				int v = edges_[ind].v;
+				int c = edges_[ind].c;
+				int f = edges_[ind].f;
 				if(c - f < b) continue;
-				if(d[v] == -1) {
-					d[v] = d[u] + 1;
+				if(d_[v] == -1) {
+					d_[v] = d_[u] + 1;
 					q.push(v);
 				}
 			}
@@ -68,18 +82,18 @@ struct network {
 		if(u == finish) {
 			return fp;
 		}
-		for(; ptr[u] < g[u].size(); ++ptr[u]) {
-			int ind = g[u][ptr[u]];
-			int v = edges[ind].v;
-			int c = edges[ind].c;
-			int f = edges[ind].f;
+		for(; ptr_[u] < g_[u].size(); ++ptr_[u]) {
+			int ind = g_[u][ptr_[u]];
+			int v = edges_[ind].v;
+			int c = edges_[ind].c;
+			int f = edges_[ind].f;
 			if(c - f < b) continue;
-			if(d[v] != d[u]+1) continue;
+			if(d_[v] != d_[u]+1) continue;
 				
 			int tmp = dfs(v, finish, b, min(c - f, fp));
 			if(tmp > 0) {
-				edges[ind].f += tmp;
-				edges[ind^1].f -= tmp;
+				edges_[ind].f += tmp;
+				edges_[ind^1].f -= tmp;
 				return tmp;
 			}
 		}
@@ -90,27 +104,16 @@ struct network {
 		int res = 0;
 		while(1) {
 			bfs(start, b);
-			if(d[finish] == -1) {
+			if(d_[finish] == -1) {
 				break;
 			}
-			ptr.assign(n, 0);
+			ptr_.assign(n_, 0);
 			while(1) {
 				int f = dfs(start, finish, b, 2e9);
 				if(f > 0) {
 					res += f;
 				} else break;
 			}
-		}
-		return res;
-	}
-	
-	// finds max flow in the network using Dinic's algorithm
-	int getMaxFlow(int start, int finish) {
-		d.assign(n, -1);
-		ptr.assign(n, 0);
-		int res = 0;
-		for(int pw = 30; pw >= 0; --pw) {
-			res += dinic(start, finish, 1 << pw);
 		}
 		return res;
 	}
@@ -126,5 +129,11 @@ int main() {
 	net.add_edge(1, 3, 100);
 	net.add_edge(2, 3, 100);
 	
-	cout << net.getMaxFlow(0, 3) << '\n';
+	//   _________[1]_________
+	//  |  (100)   |   (100)  |
+	//-[0]         |(1)      [3]-
+	//  |_________[2]_________|
+	//     (100)       (100)
+	
+	cout << net.getMaxFlow(0, 3) << '\n'; // 200
 }

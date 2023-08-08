@@ -18,22 +18,25 @@ using wgraph = vector< vector<wedge> >;
 // lowest common ancestor (in tree ofc)
 // build O(n*MAX_D) <- O(nlogn)
 // query O(logn)
-struct lca {
-	int n;						// vertex count
-	vector<int> d;				// depth of vertices
-	vector< vector<int> > up; 	// "binary" ancestors of a vertex
+class lca {
+	
+  private:
+	int n_;						// vertex count
+	vector<int> d_;				// depth of vertices
+	vector< vector<int> > up_; 	// "binary" ancestors of a vertex
 								// up[v][0] - 1st ancestor of v,
 								// up[v][1] - 2nd ancestor of v,
 								// up[v][2] - 4th ancestor of v,
 								// up[v][3] - 8th ancestor of v...
-	vector< vector<ll> > data;	// max data (example)
+	vector< vector<ll> > data_;	// max data (example)
 	
+  public:
 	// dfs to fill vector d and first ancestors in vector up
 	void dfs(const graph& g, int u, int prev) {
 		for(int v : g[u]) {
 			if(v == prev) continue;
-			d[v] = d[u] + 1;
-			up[v][0] = u;
+			d_[v] = d_[u] + 1;
+			up_[v][0] = u;
 			dfs(g, v, u);
 		}
 	}
@@ -43,39 +46,39 @@ struct lca {
 			int v = wdg.v;
 			int w = wdg.w;
 			if(v == prev) continue;
-			d[v] = d[u] + 1;
-			up[v][0] = u;
-			data[v][0] = w;
+			d_[v] = d_[u] + 1;
+			up_[v][0] = u;
+			data_[v][0] = w;
 			dfs(g, v, u);
 		}
 	}
 	
 	lca(const graph& g, int root) {
-		n = g.size();
-		d.assign(n, 0);
-		up.assign(n, vector<int>(MAX_D, 0));
-		data.assign(n, vector<ll>(MAX_D, 0));
-		up[root][0] = 0;
+		n_ = g.size();
+		d_.assign(n_, 0);
+		up_.assign(n_, vector<int>(MAX_D, 0));
+		data_.assign(n_, vector<ll>(MAX_D, 0));
+		up_[root][0] = 0;
 		dfs(g, root, root);
 		for(int j = 1; j < MAX_D; ++j) {
-			for(int u = 0; u < n; ++u) {
-				up[u][j] = up[up[u][j-1]][j-1];
-				data[u][j] = max(data[u][j-1], data[up[u][j-1]][j-1]);
+			for(int u = 0; u < n_; ++u) {
+				up_[u][j] = up_[up_[u][j-1]][j-1];
+				data_[u][j] = max(data_[u][j-1], data_[up_[u][j-1]][j-1]);
 			}
 		}
 	}
 	
 	lca(const wgraph& g, int root) {
-		n = g.size();
-		d.assign(n, 0);
-		up.assign(n, vector<int>(MAX_D, 0));
-		data.assign(n, vector<ll>(MAX_D, 0));
-		up[root][0] = 0;
+		n_ = g.size();
+		d_.assign(n_, 0);
+		up_.assign(n_, vector<int>(MAX_D, 0));
+		data_.assign(n_, vector<ll>(MAX_D, 0));
+		up_[root][0] = 0;
 		dfs(g, root, root);
 		for(int j = 1; j < MAX_D; ++j) {
-			for(int u = 0; u < n; ++u) {
-				up[u][j] = up[up[u][j-1]][j-1];
-				data[u][j] = max(data[u][j-1], data[up[u][j-1]][j-1]);
+			for(int u = 0; u < n_; ++u) {
+				up_[u][j] = up_[up_[u][j-1]][j-1];
+				data_[u][j] = max(data_[u][j-1], data_[up_[u][j-1]][j-1]);
 			}
 		}
 	}
@@ -83,23 +86,23 @@ struct lca {
 	// adds a leaf-node to the tree
 	// u - the parent of new node
 	void addLeaf(int u) {
-		d.push_back(d[u]+1);
-		up.push_back(vector<int>(MAX_D));
-		up[n][0] = u;
+		d_.push_back(d_[u]+1);
+		up_.push_back(vector<int>(MAX_D));
+		up_[n_][0] = u;
 		for(int j = 1; j < MAX_D; ++j) {
-			up[n][j] = up[up[n][j-1]][j-1];
-			data[n][j] = max(data[n][j-1], data[up[n][j-1]][j-1]);
+			up_[n_][j] = up_[up_[n_][j-1]][j-1];
+			data_[n_][j] = max(data_[n_][j-1], data_[up_[n_][j-1]][j-1]);
 		}
-		++n;
+		++n_;
 	}
 	
 	// checks if vertex u is the parent of vertex v
 	bool isParent(int u, int v) {
-		if(d[u] > d[v]) return false;
-		int delta = d[v] - d[u];
+		if(d_[u] > d_[v]) return false;
+		int delta = d_[v] - d_[u];
 		for(int j = MAX_D-1; j >= 0; --j) {
 			if(delta & (1 << j)) {
-				v = up[v][j];
+				v = up_[v][j];
 			}
 		}
 		return u == v;
@@ -107,38 +110,38 @@ struct lca {
 	
 	// finds the lca of vertices u and v
 	int find(int u, int v) {
-		if(d[u] > d[v]) swap(u,v);
-		int delta = d[v] - d[u];
+		if(d_[u] > d_[v]) swap(u,v);
+		int delta = d_[v] - d_[u];
 		for(int j = MAX_D-1; j >= 0; --j) {
 			if(delta & (1 << j)) {
-				v = up[v][j];
+				v = up_[v][j];
 			}
 		}
 		if(u == v) return u;
 		for(int j = MAX_D-1; j >= 0; --j) {
-			if(up[u][j] != up[v][j]) {
-				u = up[u][j];
-				v = up[v][j];
+			if(up_[u][j] != up_[v][j]) {
+				u = up_[u][j];
+				v = up_[v][j];
 			}
 		}
-		return up[u][0];
+		return up_[u][0];
 	}
 	
 	// finds the distance between vertices u and v
 	int getLen(int u, int v) {
-		if(d[u] > d[v]) swap(u,v);
-		int delta = d[v] - d[u];
+		if(d_[u] > d_[v]) swap(u,v);
+		int delta = d_[v] - d_[u];
 		int res = delta;
 		for(int j = MAX_D-1; j >= 0; --j) {
 			if(delta & (1 << j)) {
-				v = up[v][j];
+				v = up_[v][j];
 			}
 		}
 		if(u == v) return res;
 		for(int j = MAX_D-1; j >= 0; --j) {
-			if(up[u][j] != up[v][j]) {
-				u = up[u][j];
-				v = up[v][j];
+			if(up_[u][j] != up_[v][j]) {
+				u = up_[u][j];
+				v = up_[v][j];
 				res += 2 * (1 << j);
 			}
 		}
@@ -147,24 +150,24 @@ struct lca {
 	
 	// finds max data between vertices u and v (example)
 	int getMaxData(int u, int v) {
-        if(d[u] > d[v]) swap(u,v);
-        int delta = d[v] - d[u];
+        if(d_[u] > d_[v]) swap(u,v);
+        int delta = d_[v] - d_[u];
         ll res = -2e9;
         for(int j = MAX_D-1; j >= 0; --j) {
             if(delta & (1 << j)) {
-                res = max(res, data[v][j]);
-                v = up[v][j];
+                res = max(res, data_[v][j]);
+                v = up_[v][j];
             }
         }
         if(u == v) return res;
         for(int j = MAX_D-1; j >= 0; --j) {
-            if(up[u][j] != up[v][j]) {
-                res = max(max(res, data[u][j]), data[v][j]);
-                u = up[u][j];
-                v = up[v][j];
+            if(up_[u][j] != up_[v][j]) {
+                res = max(max(res, data_[u][j]), data_[v][j]);
+                u = up_[u][j];
+                v = up_[v][j];
             }
         }
-        return max(max(res, data[u][0]), data[v][0]);
+        return max(max(res, data_[u][0]), data_[v][0]);
     }
 };
  
@@ -186,9 +189,17 @@ int main() {
 	g[4].push_back({5, 3});
 	g[5].push_back({6, 5});
 	
+	//        0
+	//    (1)/ \(2)
+	//      /   4
+	//     1     \(3)
+	// (1)/ \(8)  5
+	//   2   3     \(5)
+	//              6
+	
 	lca c(g, 0);
-	cout << c.getLen(2, 6) << '\n';
-	cout << c.getMaxData(2, 6) << '\n';
-	cout << c.getMaxData(2, 5) << '\n';
-	cout << c.getMaxData(3, 5) << '\n';
+	cout << c.getLen(2, 6) << '\n';		// 5
+	cout << c.getMaxData(2, 6) << '\n';	// 5
+	cout << c.getMaxData(2, 5) << '\n';	// 3
+	cout << c.getMaxData(3, 5) << '\n';	// 8
 }
