@@ -33,7 +33,7 @@ class treap {
 	}
 	
 	// prints the set values
-	void print() { printNode(root_); cout << '\n'; } 
+	void print() { printInternal(root_); cout << '\n'; } 
 	
 	// inserts a new element 
 	void insert(T x) {
@@ -80,11 +80,11 @@ class treap {
 		}
 	}
 	
-	void printNode(pnode t) {
+	void printInternal(pnode t) {
 		if(t == nullptr) return;
-		printNode(t->left);
+		printInternal(t->left);
 		cout << t->val  << ' ';
-		printNode(t->right);
+		printInternal(t->right);
 	}
 };
 

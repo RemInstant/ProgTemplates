@@ -12,7 +12,8 @@ using ull = unsigned long long;
 // implicit treap (implicit cartesian tree)
 // it represents a sequence of elements and implements such O(logn)-operations
 // as insert, erase, get, set, compute target function on any subsegment,
-// update any subsegment (add/set), reverse any subsegment
+// update any subsegment (set*/add), reverse any subsegment
+// *by default
 template<typename T, typename targetFunctor = plus<T>>
 class implicitTreap {
 	
@@ -54,7 +55,7 @@ class implicitTreap {
 		root_ = nullptr;
 		rng_ = mt19937(chrono::steady_clock::now().time_since_epoch().count());
 		targetF_ = targetFunctor();
-		updMode_ = ADD;
+		updMode_ = SET;
 	}
 	
 	implicitTreap(uint n): implicitTreap() {
@@ -71,6 +72,9 @@ class implicitTreap {
 		}
 	}
 	
+	// prints the sequence
+	void print() { printInternal(root_); cout << '\n'; } 
+	
 	// switches update mode to ADD ( in O(n) )
 	void switchUpdateModeToAdd() {
 		pushAll(root_);
@@ -82,9 +86,6 @@ class implicitTreap {
 		pushAll(root_);
 		updMode_ = SET;
 	}
-	
-	// prints the sequence
-	void print() { printNode(root_); cout << '\n'; } 
 	
 	// inserts a new element before the pth element
 	void insert(uint p, T x) {
@@ -245,12 +246,12 @@ class implicitTreap {
 		}
 	}
 	
-	void printNode(pnode t) {
+	void printInternal(pnode t) {
 		if(t == nullptr) return;
 		push(t);
-		printNode(t->left);
+		printInternal(t->left);
 		cout << t->val  << ' ';
-		printNode(t->right);
+		printInternal(t->right);
 		updateCnt(t);
 	}
 };
@@ -268,6 +269,7 @@ int main() {
 	// equals to
 	// iTreap<int, plus<int>> t(arr);
 	
+	t.switchUpdateModeToAdd();			// change update mode to add
 	t.print();							// {1, 2, 3}
 	t.insert(0, 5);						// insert 5 at pos 0
 	t.print();							// {5, 1, 2, 3}
