@@ -91,7 +91,7 @@ vector< vector<ll> > fw(const wgraph& g) {
 	return d;
 }
 
-// Dijkstra's algorithm for sparce wgraphs ( O(nlogn + mlogn) )
+// Dijkstra's algorithm for sparse wgraphs ( O(nlogn + mlogn) )
 // finds the min path from given vertex to each other in wgraph without negative weights
 // g - the wgraph
 // st - the given vertex
