@@ -44,3 +44,6 @@ Prefix tree (trie)<br>
 Segment tree (segtree)<br>
 Cartesian tree (treap)<br>
 Implicit cartesian tree (impicit treap)
+
+### Numerical methods
+Fast Fourier transform (FFT)
