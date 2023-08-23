@@ -4,7 +4,7 @@
  
 using namespace std;
 
-double PI = acos(-1);
+const double PI = acos(-1);
  
 struct vec2d {
 	double x,y;

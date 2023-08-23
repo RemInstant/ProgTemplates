@@ -21,6 +21,7 @@ bool solveStandardNim(vector<ll>& heaps) {
 // returns minimal non-negative x that is not included in the vector
 int mex(vector<ll> a) {
 	ll n = a.size();
+	if(n == 0) return 0;
 	sort(a.begin(), a.end());
 	if(a[0] > 0) return 0;
 	for(ll i = 0; i < n-1; ++i)
