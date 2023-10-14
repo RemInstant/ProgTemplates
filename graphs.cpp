@@ -152,19 +152,19 @@ ll prim(const wgraph& g) {
 
 // recursion for kuhn
 bool dfsKuhn(const graph& g, int u, vector<int>& mt, vector<char>& visited) {
-    if(visited[u]) return false;
-    visited[u] = 1;
-    for(int v : g[u]) {
-        if(mt[v] == -1) {
-            mt[v] = u;
-            return true;
-        }
-        if(dfsKuhn(g, mt[v], mt, visited)) {
-            mt[v] = u;
-            return true;
-        }
-    }
-    return false;
+	if(visited[u]) return false;
+	visited[u] = 1;
+	for(int v : g[u]) {
+		if(mt[v] == -1) {
+			mt[v] = u;
+			return true;
+		}
+		if(dfsKuhn(g, mt[v], mt, visited)) {
+			mt[v] = u;
+			return true;
+		}
+	}
+	return false;
 }
 
 // Kuhn's algorithm
@@ -175,12 +175,12 @@ int kuhn(const graph& g, int st = 0) {
 	int n = g.size();
 	int ans = 0;
 	vector<int> d = bfs(g, st);
-    vector<int> mt(n, -1);
-    for(int i = 0; i < n; ++i) {
-        if(d[i] & 1) continue;
-        vector<char> visited(n, 0);
-        ans += dfsKuhn(g, i, mt, visited);
-    }
+	vector<int> mt(n, -1);
+	for(int i = 0; i < n; ++i) {
+		if(d[i] & 1) continue;
+		vector<char> visited(n, 0);
+		ans += dfsKuhn(g, i, mt, visited);
+	}
 	return ans;
 }
 
