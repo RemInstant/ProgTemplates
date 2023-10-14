@@ -6,8 +6,6 @@ using ll = long long;
 using ull = unsigned long long;
 
 // segtree
-// getFunction - computes the sum of the values of any subvector
-// updFunction - adds any value to each element of any subvector
 // build	O(n)
 // get		O(flogn), where f - complexity of push (in this case O(1))
 // update	O(logn)
