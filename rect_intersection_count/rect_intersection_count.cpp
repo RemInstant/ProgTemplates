@@ -549,7 +549,7 @@ int main() {
     size_t n;
     cin >> n;
     
-    size_t output_n = min(n, 10ull);
+    size_t output_n = min(n, (size_t) 10);
     vector<rect> rects(n);
     
     for (size_t i = 0; i < n; ++i)
